@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Manager</title>
+    <script>
+        async function addLink() {
+            const url = document.getElementById('url').value;
+            const response = await fetch('/add_link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url })
+            });
+            const result = await response.json();
+            alert(result.message);
+            loadLinks();
+        }
+
+        async function loadLinks() {
+            const response = await fetch('/get_links');
+            const links = await response.json();
+            const linkList = document.getElementById('linkList');
+            linkList.innerHTML = '';
+            links.forEach(link => {
+                const a = document.createElement('a');
+                a.href = link;
+                a.textContent = link;
+                a.target = '_blank';
+                const li = document.createElement('li');
+                li.appendChild(a);
+                linkList.appendChild(li);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadLinks);
+    </script>
+</head>
+<body>
+    <h1>Link Manager</h1>
+    <input type="text" id="url" placeholder="Enter URL">
+    <button onclick="addLink()">Add Link</button>
+    <ul id="linkList"></ul>
+</body>
+</html>
